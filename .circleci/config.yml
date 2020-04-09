@@ -21,8 +21,8 @@ jobs:
           name: Compress source
       - persist_to_workspace:
           paths:
-            - covid-csv-filter/release.zip
-          root: .
+            - release.zip
+          root: covid-csv-filter
   deploy:
     executor: aws-cli/default
     environment:
