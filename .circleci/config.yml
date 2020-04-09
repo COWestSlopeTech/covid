@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  lambda: dosomething/lambda@0.0.4
   python: circleci/python@0.2.1
 
 jobs:
@@ -14,8 +15,23 @@ jobs:
       - run:
           command: python -m pytest
           name: Test
+  deploy:
+    executor: python/default
+      steps:
+        - lambda/deploy:
+            app: co-covid-csv-filter
+            working_directory: covid-csv-filter
+
 
 workflows:
   main:
     jobs:
       - build-and-test
+      - deploy:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - master
+
