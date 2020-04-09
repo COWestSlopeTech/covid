@@ -16,7 +16,7 @@ jobs:
           command: python -m pytest
           name: Test
       - lambda/store:
-          working_directory: covid-csv-filter
+          working_directory: covid-csv-filter/lambda_function
 
 workflows:
   main:
