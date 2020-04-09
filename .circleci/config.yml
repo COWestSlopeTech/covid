@@ -15,15 +15,15 @@ jobs:
       - run:
           command: python -m pytest
           name: Test
-  deploy:
-    executor: lambda/deploy
 
 
 workflows:
   main:
     jobs:
       - build-and-test
-      - deploy:
+      - lambda/deploy:
+          app: co-covid-csv-filter
+          working_directory: covid-csv-filter
           requires:
             - build-and-test
           # filters:
