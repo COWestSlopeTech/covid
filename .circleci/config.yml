@@ -23,7 +23,6 @@ workflows:
       - build-and-test
       - lambda/deploy:
           app: co-covid-csv-filter
-          working_directory: covid-csv-filter
           requires:
             - build-and-test
           # filters:
