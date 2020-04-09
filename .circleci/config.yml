@@ -16,11 +16,7 @@ jobs:
           command: python -m pytest
           name: Test
   deploy:
-    executor: python/default
-    steps:
-      - lambda/deploy:
-          app: co-covid-csv-filter
-          working_directory: covid-csv-filter
+    executor: lambda/deploy
 
 
 workflows:
