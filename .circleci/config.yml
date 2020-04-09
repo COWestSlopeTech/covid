@@ -15,10 +15,8 @@ jobs:
       - run:
           command: python -m pytest
           name: Test
-      - persist_to_workspace:
-          root: .
-          paths: covid-csv-filter
-
+      - lambda/store:
+          working_directory: covid-csv-filter
 
 workflows:
   main:
