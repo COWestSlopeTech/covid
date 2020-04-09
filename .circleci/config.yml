@@ -17,10 +17,10 @@ jobs:
           name: Test
   deploy:
     executor: python/default
-      steps:
-        - lambda/deploy:
-            app: co-covid-csv-filter
-            working_directory: covid-csv-filter
+    steps:
+      - lambda/deploy:
+          app: co-covid-csv-filter
+          working_directory: covid-csv-filter
 
 
 workflows:
