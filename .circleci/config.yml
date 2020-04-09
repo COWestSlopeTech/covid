@@ -51,8 +51,7 @@ workflows:
   main:
     jobs:
       - build-and-test
-      - lambda/deploy:
-          app: co-covid-csv-filter
+      - deploy:
           requires:
             - build-and-test
           # filters:
