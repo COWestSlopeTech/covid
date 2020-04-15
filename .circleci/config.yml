@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   python: circleci/python@0.2.1
+  aws-cli: circleci/aws-cli@1.0.0
 
 jobs:
   build-and-test:
@@ -14,8 +15,48 @@ jobs:
       - run:
           command: python -m pytest
           name: Test
+      # TODO: move this to deploy job?
+      - run:
+          command: cd covid-csv-filter && zip -r release.zip .
+          name: Compress source
+      - persist_to_workspace:
+          paths:
+            - release.zip
+          root: covid-csv-filter
+  deploy:
+    executor: aws-cli/default
+    environment:
+      APP_NAME: co-covid-csv-filter
+    steps:
+      - attach_workspace:
+          at: .
+      - aws-cli/install
+      - aws-cli/setup
+      - run:
+          command: |
+            echo "export FUNCTION_NAME=$APP_NAME" >> $BASH_ENV
+            echo "export DEPLOY_BUCKET=$APP_NAME-deploy" >> $BASH_ENV
+          name: Prepare deployment targets
+      - run:
+          command: |
+            aws s3 cp release.zip s3://$DEPLOY_BUCKET --region us-east-1
+          name: Upload build to S3 bucket
+      - run:
+          command: |
+            aws lambda update-function-code --region us-east-1 --function-name $FUNCTION_NAME \
+              --s3-bucket $DEPLOY_BUCKET --s3-key release.zip --publish \
+              --query '{Name:FunctionName,Version:Version}' --output table
+          name: Publish new function version
 
 workflows:
   main:
     jobs:
       - build-and-test
+      - deploy:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - master
+
